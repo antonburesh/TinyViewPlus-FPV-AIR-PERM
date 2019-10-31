@@ -195,8 +195,9 @@ public:
     int iconPosXTarget;
     int iconPosYTarget;
     // label
-    string labelString;
-    int labelPosX;
+	string labelString;
+	string pilotID;
+	int labelPosX;
     int labelPosY;
     int labelPosXTarget;
     int labelPosYTarget;

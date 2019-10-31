@@ -2483,7 +2483,7 @@ void fwriteRaceResult() {
     strsumm += "Name" + sep  + "Position" + sep + "Laps" + sep + "BestLap" + sep + "TotalTime" + newline;
     // - body
     for (int i = 0; i < cameraNum; i++) {
-        string pilot = (camView[i].labelString == "") ? ("Pilot" + ofToString(i + 1)) : camView[i].labelString;
+        string pilot = (camView[i].pilotID == "") ? ("Pilot" + ofToString(i + 1)) : camView[i].pilotID;
         int pos = camView[i].racePosition;
         int lps = camView[i].totalLaps;
         float blap = getBestLap(i);
@@ -3341,7 +3341,18 @@ void processQrReader() {
 #ifdef TARGET_WIN32
                 label = utf8ToAnsi(label);
 #endif /* TARGET_WIN32 */
-                camView[qrCamIndex].labelString = label;
+				string delimiter = "|";		
+				if (label.find(delimiter) != -1) {
+					// We found delimiter - we can split name
+					camView[qrCamIndex].labelString = label.substr(0, label.find(delimiter)); // Here the pilot name
+					label.erase(0, label.find(delimiter) + delimiter.length()); // Here the id
+					camView[qrCamIndex].pilotID = label;
+				}
+				else {
+					// Now found delimeter - fallback to default settings
+					camView[qrCamIndex].labelString = label;
+					camView[qrCamIndex].pilotID = label;
+				}
                 autoSelectCameraIcon(qrCamIndex + 1, label);
             }
         }
