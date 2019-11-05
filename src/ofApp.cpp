@@ -66,6 +66,8 @@ ofxJoystick gamePad[GPAD_MAX_DEVS];
 // speed gun
 int speedGunMode;
 float speedGunDval;
+//Anton Set
+bool speekQrStart = false;
 
 //--------------------------------------------------------------
 void setupInit() {
@@ -87,7 +89,7 @@ void setupInit() {
     tvpScene = SCENE_INIT;
     ofResetElapsedTimeCounter();
     // screen
-    ofSetWindowTitle("Tiny View Plus " + ofToString(APP_VER));
+    ofSetWindowTitle("FPV-AIR-PERM " + ofToString(APP_VER));
     ofBackground(0, 0, 0);
     ofSetVerticalSync(VERTICAL_SYNC);
     ofSetFrameRate(FRAME_RATE);
@@ -283,7 +285,7 @@ void setupMain() {
         speakAny("jp", "タイニービュープラスへようこそ。");
 #endif /* TARGET_WIN32 */
     } else {
-        speakAny("en", "Welcome to Tiny View Plus.");
+        speakAny("ru", "Добро пожаловать");
     }
     // debug
     if (DEBUG_ENABLED == true) {
@@ -846,11 +848,11 @@ string getWatchString(float sec) {
 void drawWatch() {
     string str;
     if (raceStarted == false) {
-        str = "Finished";
+        str = "Финиш";
     } else if (elapsedTime < 5) {
         str = ofToString(5 - (int)elapsedTime);
     } else if (elapsedTime < 7) {
-        str = "Go!";
+        str = "Полетели";
     } else {
         float sec;
         sec = elapsedTime - WATCH_COUNT_SEC;
@@ -2040,6 +2042,13 @@ public:
                 // 409: English
                 this->xmltext = "<xml><lang langid=\"409\"><rate speed=\"2\">" + words + "</rate></lang></xml>";
             }
+
+			else if (lang == "ru") {
+				// 419: Russian
+				this->xmltext = "<xml><lang langid=\"419\"><rate speed=\"2\">" + words + "</rate></lang></xml>";
+				
+			}
+
             else if (lang == "jp") {
                 // 411: Japanese
                 this->xmltext = "<xml><lang langid=\"411\"><rate speed=\"2\">" + words + "</rate></lang></xml>";
@@ -2074,17 +2083,19 @@ void speakLap(int camid, float sec, int num) {
         sout = regex_replace(sout, regex("(Pilot)(\\d)"), "$1 $2");
     }
     if (useStartGate == true && num == 1) {
+
         if (speechLangJpn == true) {
             sout += "スタート";
         } else {
-            sout += "started";
+            sout += "Старт";
         }
-        speakAny(speechLangJpn ? "jp" : "en", sout);
+
+        speakAny("ru", sout);
         return;
     }
     ssec = getLapStr(sec);
     if (num > 0) {
-        sout += (speechLangJpn == true) ? "ラップ" : "lap";
+        sout += (speechLangJpn == true) ? "ラップ" : "круг";
         sout += " " + ofToString(num - (useStartGate == true ? 1 : 0)) + ", ";
     }
     if (speechLangJpn == true) {
@@ -2093,9 +2104,11 @@ void speakLap(int camid, float sec, int num) {
         sout += ssec.substr(ssec.length() - 1, 1);
     }
     else {
-        sout += ssec + " seconds";
+
+		
+        //sout += ssec + " seconds";
     }
-    speakAny(speechLangJpn ? "jp" : "en", sout);
+    speakAny("ru", sout);
 }
 
 //--------------------------------------------------------------
@@ -2110,11 +2123,16 @@ void setNextSpeechRemainSecs(int curr) {
         }
     } else if (curr > 30) {
         next = 30;
-    } else if (curr > 0) {
+	}
+	else if (curr > 15) {
+		next = 15;
+	}
+	else if (curr > 0) {
         next = 0;
     } else {
         next = -1;
     }
+
     nextSpeechRemainSecs = next;
 }
 
@@ -2126,41 +2144,47 @@ void speakRemainTime(int sec) {
         if (jp == true) {
             str = "規定時間が経過しました";
         } else {
-            str = "specified time has passed.";
+			//str = "specified time has passed.";
+			toggleRace();
         }
+		
     } else {
-        if (jp == true) {
-            str += "残り";
-        }
-        if (sec >= 60 && sec % 60 == 0) {
+       // if (jp == true) {
+          //  str += "残り";
+       // }
+        if (sec == 15 ) {
             // minute
-            int min = sec / 60;
-            str += ofToString(min);
-            if (jp == true) {
-                str += "分";
-            } else {
-                str += " minute";
-                if (min != 1) {
-                    str += "s";
-                }
-            }
+            //int min = sec / 60;
+			//int min = 0;
+			//str += ofToString(min);
+			str += "осталось 15 секунд до окончания гонки";
+
+           // if (jp == true) {
+              //  str += "分";
+           // } else {
+               // str += " minute";
+                //if (min != 1) {
+                  //  str += "s";
+              //  }
+           // }
         } else {
             // second
-            str += ofToString(sec);
-            if (jp == true) {
-                str += "秒";
-            } else {
-                str += " second";
-                if (sec != 1) {
-                    str += "s";
-                }
-            }
+            //str += ofToString(sec);
+			int sec = 0;
+           // if (jp == true) {
+              //  str += "秒";
+          //  } else {
+             //   str += " second";
+            //    if (sec != 1) {
+                  //  str += "s";
+             //   }
+            //}
         }
-        if (jp == false) {
-            str += " to go";
-        }
+       // if (jp == false) {
+           // str += " to go";
+       // }
     }
-    speakAny(jp == true ? "jp" : "en", str);
+	speakAny("ru", str);
 }
 
 //--------------------------------------------------------------
@@ -2250,8 +2274,9 @@ void stopRace(bool appexit) {
         if (speechLangJpn == true) {
             speakAny("jp", "レース終了");
         } else {
-            speakAny("en", "race finished.");
+           // speakAny("en", "race finished.");
         }
+		speakAny("ru", "Гонка закончилась");
         raceResultTimer = ARAP_RSLT_DELAY;
     }
     fwriteRaceResult();
@@ -3305,16 +3330,19 @@ string ansiToUtf8(string ansi) {
 }
 #endif /* TARGET_WIN32 */
 
+
 //--------------------------------------------------------------
 void toggleQrReader() {
     if (qrEnabled == false) {
         // start
+		speekQrStart = false;
         qrUpdCount = 1;
         qrCamIndex = 0;
         for (int i = 0; i < cameraNum; i++) {
             camView[i].qrScanned = false;
         }
         qrEnabled = true;
+		
     }
     else {
         // stop
@@ -3323,8 +3351,19 @@ void toggleQrReader() {
 }
 
 //--------------------------------------------------------------
+
 void processQrReader() {
+	
     if (qrUpdCount == QR_CYCLE) {
+		if (!speekQrStart) {
+			speakAny("ru", "Пилоты, включайте свои звездолёты");
+
+			for (int is = 0; is < 3; ++is) {
+				camView[is].labelString = "Ожидание пилота";
+			}
+			
+			speekQrStart = true;
+		}
         bool scanned = false;
         if (camView[qrCamIndex].qrScanned == false) {
             ofxZxing::Result zxres;
@@ -3332,8 +3371,10 @@ void processQrReader() {
             if (camView[qrCamIndex].needResize == true) {
                 pxl.resize(CAMERA_WIDTH, CAMERA_HEIGHT);
             }
+			
             zxres = ofxZxing::decode(pxl, true);
             if (zxres.getFound()) {
+				
                 scanned = true;
                 camView[qrCamIndex].qrScanned = true;
                 beepSound.play();
@@ -3344,7 +3385,10 @@ void processQrReader() {
 				string delimiter = "|";		
 				if (label.find(delimiter) != -1) {
 					// We found delimiter - we can split name
-					camView[qrCamIndex].labelString = label.substr(0, label.find(delimiter)); // Here the pilot name
+					string thisIsPilotName = label.substr(0, label.find(delimiter)); // Here the pilot name
+					camView[qrCamIndex].labelString = thisIsPilotName;
+					string pilotSay = "Пилот " + thisIsPilotName + " зарегистрирован";
+					speakAny("ru", pilotSay);
 					label.erase(0, label.find(delimiter) + delimiter.length()); // Here the id
 					camView[qrCamIndex].pilotID = label;
 				}
