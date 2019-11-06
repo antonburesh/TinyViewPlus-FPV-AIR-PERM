@@ -2497,18 +2497,22 @@ void fwriteRaceResult() {
 #endif /* TARGET_WIN32 */
     string strsumm = timestamp + newline + newline;
     string strlaph = "";
-    string strlapb = "";
-    string sep = "  ";
+	string strlapb = "";
+	string strdaemonh = "";
+	string strdaemonb = "";
+	string sep = "  ";
     int maxlap = 0;
 
     // Summary: Name Position Laps BestLap TotalTime
     updateRacePositions();
     // - head
     strsumm += "- Summary -" + newline;
-    strsumm += "Name" + sep  + "Position" + sep + "Laps" + sep + "BestLap" + sep + "TotalTime" + newline;
+    strsumm += "Name" + sep + "ID" + sep + "Position" + sep + "Laps" + sep + "BestLap" + sep + "TotalTime" + newline;
     // - body
     for (int i = 0; i < cameraNum; i++) {
-        string pilot = (camView[i].pilotID == "") ? ("Pilot" + ofToString(i + 1)) : camView[i].pilotID;
+        string pilot = (camView[i].labelString == "") ? ("Pilot" + ofToString(i + 1)) : camView[i].labelString;
+		pilot += sep;
+		pilot += (camView[i].pilotID == "") ? ("NOID") : camView[i].pilotID;
         int pos = camView[i].racePosition;
         int lps = camView[i].totalLaps;
         float blap = getBestLap(i);
@@ -2527,6 +2531,7 @@ void fwriteRaceResult() {
         strsumm += ((total <= 0) ? "-:-.-" : getWatchString(total)) + sep; // TotalTime
         strsumm += newline;
     }
+	strsumm += "- Summary end -";
     strsumm += newline;
 
     // All Laps: Lap# P1(lap) P1(total) P2(lap) P2(total) P3(lap) P3(total) P4(lap) P4(total)
@@ -2571,12 +2576,49 @@ void fwriteRaceResult() {
                 strlapb += sep;
             }
         }
+<<<<<<< HEAD
         strlapb += newline;
+=======
+        strlapb += "- All Laps end -" + newline;
+>>>>>>> 1. added info to result file for fast parsing by daemon
     }
+	// Daemon file
+	strdaemonh += newline;
+	strdaemonh += "//Dump data for daemon parsing";
+	strdaemonh += newline;
+<<<<<<< HEAD
+	strdaemonh += "########## Daemon info ##########";
+=======
+	strdaemonh += "- Daemon info -";
+>>>>>>> 1. added info to result file for fast parsing by daemon
+	strdaemonh += newline;
+	for (int i = 0; i < cameraNum; i++) {
+		string pilot = camView[i].pilotID;
+		// no pilotID - nothing write to file and send
+		if (pilot == "") continue;
 
+		// Print pilot id
+		strdaemonb += pilot;
+		strdaemonb += sep;
+
+		// Print laps
+		for (int lap = 1; lap <= camView[i].totalLaps; lap++) {
+			if (useStartGate == true && lap == 1) {
+				continue;
+			}
+			strdaemonb += getLapStr(camView[i].lapHistLapTime[lap - 1]);
+			strdaemonb += sep;
+		}
+		strdaemonb += newline;
+	}
+<<<<<<< HEAD
+	
+=======
+	strdaemonb += "- Daemon info end -" + newline;
+>>>>>>> 1. added info to result file for fast parsing by daemon
     // write to file
     resultsFile.open(ARAP_RESULT_DIR + timestamp + ".txt" , ofFile::WriteOnly);
-    resultsFile << (strsumm + strlaph + strlapb);
+    resultsFile << (strsumm + strlaph + strlapb + strdaemonh + strdaemonb);
     resultsFile.close();
     // copy to clipboard
     ofSetClipboardString(strsumm + strlaph + strlapb);
