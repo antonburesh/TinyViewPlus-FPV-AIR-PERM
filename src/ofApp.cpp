@@ -224,7 +224,7 @@ void reloadCameras() {
     // load
     cameraNum = 0;
     vector<ofVideoDevice> devices = tmpgrb.listDevices();
-    ofLog() << "Scanning camera... " << devices.size() << " devices";
+    ofLog() << "Поиск приемников... " << devices.size() << " devices";
     for (size_t i = 0; i < devices.size(); i++) {
         if (regex_search(devices[i].deviceName, regex("USB2.0 PC CAMERA")) == false
             && regex_search(devices[i].deviceName, regex("GV-USB2")) == false) {
@@ -566,7 +566,7 @@ void drawCamCheck() {
     }
     if (camCheckCount >= 150 || camCheckCount < 30) {
         isalt = true;
-        str = "Scanning...";
+        str = "Сканирование...";
     }
     ofFill();
     // alert
@@ -575,7 +575,7 @@ void drawCamCheck() {
     }
     // footer
     font = &myFontOvlayP;
-    str = "Press any key to continue";
+    str = "Нажмите любую кнопку...";
     ofSetColor(myColorYellow);
     font->drawString(str, (ofGetWidth() - font->stringWidth(str)) / 2,
                      y + h + margin + font->getLineHeight());
@@ -951,7 +951,7 @@ void ofApp::draw() {
     }
     // QR reader
     if (qrEnabled == true) {
-        string str = "Scanning QR Code...";
+        string str = "Поиск QR ID пилота...";
         int x = (ofGetWidth() / 2) - (myFontInfo1p.stringWidth(str) / 2);
         drawStringWithShadow(&myFontInfo1p, myColorYellow, str, x, ofGetHeight() - 10);
     }
@@ -2115,16 +2115,7 @@ void speakLap(int camid, float sec, int num) {
 void setNextSpeechRemainSecs(int curr) {
     int next;
     // ...180,120,60,30,0
-    if (curr > 60) {
-        if (curr % 60 == 0) {
-            next = curr - 60;
-        } else {
-            next = (curr / 60) * 60;
-        }
-    } else if (curr > 30) {
-        next = 30;
-	}
-	else if (curr > 15) {
+     if (curr > 15) {
 		next = 15;
 	}
 	else if (curr > 0) {
@@ -2576,21 +2567,20 @@ void fwriteRaceResult() {
                 strlapb += sep;
             }
         }
-<<<<<<< HEAD
+        //HEAD
         strlapb += newline;
-=======
-        strlapb += "- All Laps end -" + newline;
->>>>>>> 1. added info to result file for fast parsing by daemon
+		//
+		// 1. added info to result file for fast parsing by daemon
     }
 	// Daemon file
 	strdaemonh += newline;
 	strdaemonh += "//Dump data for daemon parsing";
 	strdaemonh += newline;
-<<<<<<< HEAD
+	//HEAD
 	strdaemonh += "########## Daemon info ##########";
-=======
+	//
 	strdaemonh += "- Daemon info -";
->>>>>>> 1. added info to result file for fast parsing by daemon
+	// 1. added info to result file for fast parsing by daemon
 	strdaemonh += newline;
 	for (int i = 0; i < cameraNum; i++) {
 		string pilot = camView[i].pilotID;
@@ -2611,11 +2601,11 @@ void fwriteRaceResult() {
 		}
 		strdaemonb += newline;
 	}
-<<<<<<< HEAD
+	// HEAD
 	
-=======
+		//
 	strdaemonb += "- Daemon info end -" + newline;
->>>>>>> 1. added info to result file for fast parsing by daemon
+	// 1. added info to result file for fast parsing by daemon
     // write to file
     resultsFile.open(ARAP_RESULT_DIR + timestamp + ".txt" , ofFile::WriteOnly);
     resultsFile << (strsumm + strlaph + strlapb + strdaemonh + strdaemonb);
@@ -3213,7 +3203,7 @@ void drawHelpBody(int line) {
     ofSetColor(myColorWhite);
     value = (raceDuraSecs <= 0) ? "No Limit" : (ofToString(raceDuraSecs) + "s");
     value += ", " + ofToString(raceDuraLaps) + " laps";
-    drawStringBlock(&myFontOvlayP, "Set Race Duration (Time, Laps)", blk1, line, ALIGN_LEFT, szb, szl);
+    drawStringBlock(&myFontOvlayP, "Set: время гонки, кол. кругов", blk1, line, ALIGN_LEFT, szb, szl);
     drawStringBlock(&myFontOvlayP, value, blk2, line, ALIGN_CENTER, szb, szl);
     drawStringBlock(&myFontOvlayP, "D", blk3, line, ALIGN_CENTER, szb, szl);
     line++;
@@ -3222,7 +3212,7 @@ void drawHelpBody(int line) {
     drawULineBlock(blk1, blk4, line + 1, szb, szl);
     ofSetColor(myColorWhite);
     value = ofToString(minLapTime) + "s";
-    drawStringBlock(&myFontOvlayP, "Set Minimum Lap Time", blk1, line, ALIGN_LEFT, szb, szl);
+    drawStringBlock(&myFontOvlayP, "Минимальное время круга", blk1, line, ALIGN_LEFT, szb, szl);
     drawStringBlock(&myFontOvlayP, value, blk2, line, ALIGN_CENTER, szb, szl);
     drawStringBlock(&myFontOvlayP, "M", blk3, line, ALIGN_CENTER, szb, szl);
     line++;
@@ -3231,7 +3221,7 @@ void drawHelpBody(int line) {
     drawULineBlock(blk1, blk4, line + 1, szb, szl);
     ofSetColor(myColorWhite);
     value = useStartGate ? "On" : "Off";
-    drawStringBlock(&myFontOvlayP, "Set Staggered Start", blk1, line, ALIGN_LEFT, szb, szl);
+    drawStringBlock(&myFontOvlayP, "Стартовые ворота", blk1, line, ALIGN_LEFT, szb, szl);
     drawStringBlock(&myFontOvlayP, value, blk2, line, ALIGN_CENTER, szb, szl);
     drawStringBlock(&myFontOvlayP, "G", blk3, line, ALIGN_CENTER, szb, szl);
     line++;
@@ -3240,7 +3230,7 @@ void drawHelpBody(int line) {
     drawULineBlock(blk1, blk4, line + 1, szb, szl);
     ofSetColor(myColorWhite);
     value = cameraLapHistEnabled ? "On" : "Off";
-    drawStringBlock(&myFontOvlayP, "Set Lap History View", blk1, line, ALIGN_LEFT, szb, szl);
+    drawStringBlock(&myFontOvlayP, "Показывать результаты залета", blk1, line, ALIGN_LEFT, szb, szl);
     drawStringBlock(&myFontOvlayP, value, blk2, line, ALIGN_CENTER, szb, szl);
     drawStringBlock(&myFontOvlayP, "L", blk3, line, ALIGN_CENTER, szb, szl);
     line++;
@@ -3248,7 +3238,7 @@ void drawHelpBody(int line) {
     ofSetColor(myColorDGray);
     drawULineBlock(blk1, blk4, line + 1, szb, szl);
     ofSetColor(myColorWhite);
-    drawStringBlock(&myFontOvlayP, "Start/Stop Race", blk1, line, ALIGN_LEFT, szb, szl);
+    drawStringBlock(&myFontOvlayP, "Старт \ Стоп гонка", blk1, line, ALIGN_LEFT, szb, szl);
     drawStringBlock(&myFontOvlayP, "-", blk2, line, ALIGN_CENTER, szb, szl);
     drawStringBlock(&myFontOvlayP, "Space", blk3, line, ALIGN_CENTER, szb, szl);
     line++;
@@ -3272,7 +3262,7 @@ void drawHelpBody(int line) {
     ofSetColor(myColorDGray);
     drawULineBlock(blk1, blk4, line + 1, szb, szl);
     ofSetColor(myColorWhite);
-    drawStringBlock(&myFontOvlayP, "Display Race Result", blk1, line, ALIGN_LEFT, szb, szl);
+    drawStringBlock(&myFontOvlayP, "Показать результат залета", blk1, line, ALIGN_LEFT, szb, szl);
     drawStringBlock(&myFontOvlayP, "-", blk2, line, ALIGN_CENTER, szb, szl);
     drawStringBlock(&myFontOvlayP, "R", blk3, line, ALIGN_CENTER, szb, szl);
     line++;
@@ -3280,7 +3270,7 @@ void drawHelpBody(int line) {
     ofSetColor(myColorDGray);
     drawULineBlock(blk1, blk4, line + 1, szb, szl);
     ofSetColor(myColorWhite);
-    drawStringBlock(&myFontOvlayP, "Clear Race Result", blk1, line, ALIGN_LEFT, szb, szl);
+    drawStringBlock(&myFontOvlayP, "Очистить результат залета", blk1, line, ALIGN_LEFT, szb, szl);
     drawStringBlock(&myFontOvlayP, "-", blk2, line, ALIGN_CENTER, szb, szl);
     drawStringBlock(&myFontOvlayP, "C", blk3, line, ALIGN_CENTER, szb, szl);
     line++;
