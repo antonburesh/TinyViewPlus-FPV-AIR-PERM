@@ -2572,13 +2572,12 @@ void fwriteRaceResult() {
 		//
 		// 1. added info to result file for fast parsing by daemon
     }
+	strlapb += "- All Laps end -" + newline;
 	// Daemon file
 	strdaemonh += newline;
 	strdaemonh += "//Dump data for daemon parsing";
 	strdaemonh += newline;
 	//HEAD
-	strdaemonh += "########## Daemon info ##########";
-	//
 	strdaemonh += "- Daemon info -";
 	// 1. added info to result file for fast parsing by daemon
 	strdaemonh += newline;
